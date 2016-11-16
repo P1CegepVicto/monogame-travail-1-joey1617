@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using System;
+using System.Threading;
 
 namespace Projet01
 {
@@ -17,8 +18,10 @@ namespace Projet01
         Texture2D back;
         GameObject enemy;
         GameObject bullet;
-        
-
+        GameObject karen;
+        Texture2D victoire;
+        Texture2D defeat;
+        GameObject vict;
 
         public Game1()
         {
@@ -50,7 +53,7 @@ namespace Projet01
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            back = Content.Load<Texture2D>("back.jpeg");
+            back = Content.Load<Texture2D>("images.jpg");
             hero = new GameObject();
             hero.estVivant = true;
             hero.position.X = 300;
@@ -62,11 +65,22 @@ namespace Projet01
             enemy.position.Y = 300;
             enemy.vitesse.Y = 30;
             enemy.vitesse.X = 50;
+
             bullet = new GameObject();
             bullet.estVivant = false;        
             bullet.sprite = Content.Load<Texture2D>("bullet.png");
             hero.sprite = Content.Load<Texture2D>("hero.png");
-            
+
+            karen = new GameObject();
+            karen.estVivant = false;
+            karen.sprite = Content.Load<Texture2D>("karen.png");
+
+            victoire = Content.Load<Texture2D>("Victory.png"); 
+
+            defeat = Content.Load<Texture2D>("defeat.png"); 
+
+            vict = new GameObject();
+            vict.estVivant = false;
 
             // TODO: use this.Content to load your game content here
         }
@@ -107,16 +121,28 @@ namespace Projet01
                 hero.position.Y += 20;
             }
 
+            if (Keyboard.GetState().IsKeyDown(Keys.D))
+            {
+                hero.position.X += 20;
+            }
+
+            if (Keyboard.GetState().IsKeyDown(Keys.A))
+            {
+                hero.position.X += -20;
+            }
+
 
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
             {               
                 bullet.estVivant = true;
-                bullet.vitesse.X = 50;
+                bullet.vitesse.X = 70;
                 bullet.position.Y = hero.position.Y;
                 bullet.position.X = hero.position.X;
-                bullet.position.X += 20;
+                bullet.position.X += 50;
                 
             }
+
+           
 
 
 
@@ -124,13 +150,20 @@ namespace Projet01
             Updatehero();
             Updateenemy();
             Updatebullet();
+            Updatekaren();
            
             base.Update(gameTime);
         }
 
 
         public void Updatehero()
-        {        
+        {
+
+            if (hero.estVivant == false || enemy.estVivant == false)
+            {
+                Thread.Sleep(2000);
+                this.Exit();
+            }
 
             hero.position += hero.vitesse;
 
@@ -162,24 +195,47 @@ namespace Projet01
 
         protected void Updateenemy()
         {
+
+          
+
             if (enemy.position.Y == fenetre.Top)
             {
-                enemy.vitesse.Y = 10;
+                enemy.vitesse.Y = 60;
+                karen.estVivant = true;
+                karen.vitesse.X = -70;
+                karen.position.Y = enemy.position.Y;
+                karen.position.X = enemy.position.X;
+                karen.position.X -= 50;
             }
 
             if(enemy.position.Y + enemy.sprite.Bounds.Height == fenetre.Bottom)
             {
-                enemy.vitesse.Y = -10;
+                enemy.vitesse.Y = -65;
+                karen.estVivant = true;
+                karen.vitesse.X = -70;
+                karen.position.Y = enemy.position.Y;
+                karen.position.X = enemy.position.X;
+                karen.position.X -= 50;
             }
 
             if (enemy.position.X + enemy.sprite.Bounds.Width == fenetre.Right)
             {
-                enemy.vitesse.X = -10;
+                enemy.vitesse.X = -15;
+                karen.estVivant = true;
+                karen.vitesse.X = -70;
+                karen.position.Y = enemy.position.Y;
+                karen.position.X = enemy.position.X;
+                karen.position.X -= 50;
             }
 
             if (enemy.position.X <= fenetre.Center.X)
             {
-                enemy.vitesse.X = 10;
+                enemy.vitesse.X = 20;
+                karen.estVivant = true;
+                karen.vitesse.X = -70;
+                karen.position.Y = enemy.position.Y;
+                karen.position.X = enemy.position.X;
+                karen.position.X -= 50;
             }
 
             enemy.position += enemy.vitesse;
@@ -203,16 +259,38 @@ namespace Projet01
                 {
                     enemy.position.Y = fenetre.Bottom - enemy.sprite.Bounds.Height;
                 }
+
+
+            if (this.bullet.GetRect().Intersects(this.enemy.GetRect()))
+            {
+                
+                enemy.estVivant = false;
+                bullet.estVivant = false;
+                
+                
             }
 
+            if (this.karen.GetRect().Intersects(this.hero.GetRect()))
+            {
+
+                karen.estVivant = false;
+                hero.estVivant = false;
+                            
+            }
+        }
 
 
         public void Updatebullet()
         {
             bullet.position += bullet.vitesse;
+           
+        } 
+
+        public void Updatekaren()
+        {
+            karen.position += karen.vitesse;
+           
         }
-
-
 
 
 
@@ -234,15 +312,43 @@ namespace Projet01
 
             spriteBatch.Draw(back, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
 
-            spriteBatch.Draw(enemy.sprite, enemy.position, Color.White);
 
-            spriteBatch.Draw(hero.sprite, hero.position, Color.White);
+            if (enemy.estVivant == true)
+            {
+                spriteBatch.Draw(enemy.sprite, enemy.position, Color.White);
+
+            }
+
+            if (hero.estVivant == true)
+            {
+                spriteBatch.Draw(hero.sprite, hero.position, Color.White);
+
+            }
 
             if (bullet.estVivant == true)
             {
                 spriteBatch.Draw(bullet.sprite, bullet.position, Color.White);
 
             }
+
+            if (karen.estVivant == true)
+            {
+                spriteBatch.Draw(karen.sprite, karen.position, Color.White);
+
+            }
+
+
+            if (hero.estVivant == true && enemy.estVivant == false)
+            {
+                spriteBatch.Draw(victoire, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
+            }
+            if (hero.estVivant == false && enemy.estVivant == true)
+            {
+                spriteBatch.Draw(defeat, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
+            }
+
+
+
 
             spriteBatch.End();
 
