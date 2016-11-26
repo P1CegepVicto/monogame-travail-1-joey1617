@@ -161,7 +161,7 @@ namespace Projet01
 
             if (hero.estVivant == false || enemy.estVivant == false)
             {
-                Thread.Sleep(2000);
+                Thread.Sleep(1000);
                 this.Exit();
             }
 
@@ -200,7 +200,7 @@ namespace Projet01
 
             if (enemy.position.Y == fenetre.Top)
             {
-                enemy.vitesse.Y = 60;
+                enemy.vitesse.Y = 20;
                 karen.estVivant = true;
                 karen.vitesse.X = -70;
                 karen.position.Y = enemy.position.Y;
@@ -210,7 +210,7 @@ namespace Projet01
 
             if(enemy.position.Y + enemy.sprite.Bounds.Height == fenetre.Bottom)
             {
-                enemy.vitesse.Y = -65;
+                enemy.vitesse.Y = -15;
                 karen.estVivant = true;
                 karen.vitesse.X = -70;
                 karen.position.Y = enemy.position.Y;
@@ -293,14 +293,6 @@ namespace Projet01
         }
 
 
-
-
-
-
-
-
-
-
         /// <summary>
         /// This is called when the game should draw itself.
         /// </summary>
@@ -310,6 +302,7 @@ namespace Projet01
             GraphicsDevice.Clear(Color.Green);         
             spriteBatch.Begin();
 
+                      
             spriteBatch.Draw(back, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
 
 
@@ -345,6 +338,7 @@ namespace Projet01
             if (hero.estVivant == false && enemy.estVivant == true)
             {
                 spriteBatch.Draw(defeat, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
+
             }
 
 
