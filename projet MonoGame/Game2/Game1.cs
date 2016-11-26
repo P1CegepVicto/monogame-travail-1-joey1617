@@ -570,7 +570,7 @@ namespace Game2
              
             }
 
-            if (kills >= 10)
+            if (kills >= 35)
             {
                spriteBatch.Draw(victoire, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
                 win.Play();
