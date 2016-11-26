@@ -557,7 +557,7 @@ namespace Game2
                 MediaPlayer.Stop();
                 dieded.Stop();
                 fail.Play();
-                win.Stop();
+                
                 spriteBatch.Draw(defeat, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
                 
             }
@@ -570,7 +570,7 @@ namespace Game2
              
             }
 
-            if (kills >= 30)
+            if (kills >= 10)
             {
                spriteBatch.Draw(victoire, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
                 win.Play();
