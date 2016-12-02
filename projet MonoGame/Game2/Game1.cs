@@ -18,17 +18,21 @@ namespace Game2
         SpriteBatch spriteBatch;
         GameObject2 hero;
         Rectangle fenetre;
-        Texture2D back;
-        GameObject2[] enemy = new GameObject2[4];     
-        GameObject2 bullet;
+        GameObject2 background1;
+        GameObject2 background2;
+        GameObject2 boss;
+        GameObject2[] enemy = new GameObject2[4];
+        GameObject2[] bullet = new GameObject2[3];       
         GameObject2 enemyb;
         SpriteFont Text;
         Texture2D victoire;
         Texture2D defeat;
         GameObject2 vict;
         Random rng = new Random();
-        int kills = 0;        
+        int kills = 0;
+        int vies = 3;        
         SpriteFont score;
+        SpriteFont vie;
         protected Song song;
         SoundEffect son;
         SoundEffectInstance dieded;
@@ -86,8 +90,27 @@ namespace Game2
             
             MediaPlayer.Play(song);
 
+            background1 = new GameObject2();
+            background1.estVivant = true;
+            background1.sprite = Content.Load<Texture2D>("back.jpg");
+            background1.position.X = 0;
+            background1.position.Y = 0;
+            background1.vitesse.X = -10;
 
-            back = Content.Load<Texture2D>("back.png");
+            background2 = new GameObject2();
+            background2.estVivant = true;
+            background2.sprite = Content.Load<Texture2D>("back2.jpg");
+            background2.position.X = 1920;
+            background2.position.Y = 0;
+            background2.vitesse.X = -10;
+
+            boss = new GameObject2();
+            boss.estVivant = false;
+            boss.vitesse.Y = 5;
+            boss.position.X = 1000;
+            boss.position.Y = 500;
+            boss.sprite = Content.Load<Texture2D>("boss.png");
+
             defeat = Content.Load<Texture2D>("defeat.png");
             victoire = Content.Load<Texture2D>("victory.jpg");
 
@@ -95,11 +118,16 @@ namespace Game2
             hero.estVivant = true;
             hero.position.X = 300;
             hero.position.Y = 300;
-            hero.sprite = Content.Load<Texture2D>("pacman.png");
+            hero.sprite = Content.Load<Texture2D>("hero1.png");
 
-            bullet = new GameObject2();
-            bullet.estVivant = false;
-            bullet.sprite = Content.Load<Texture2D>("bullet.png");
+            for (int l = bullet.Length - 1; l >= 0; l--)
+            {
+                bullet[l] = new GameObject2();
+                bullet[l].estVivant = false;
+                bullet[l].sprite = Content.Load<Texture2D>("bullet1.png");
+
+                
+            }
 
 
             enemyb = new GameObject2();
@@ -112,6 +140,7 @@ namespace Game2
 
             Text = Content.Load<SpriteFont>("Font1");
             score = Content.Load<SpriteFont>("Fontscore");
+            vie = Content.Load<SpriteFont>("Font1");
            
 
 
@@ -130,22 +159,22 @@ namespace Game2
 
                 if (enemy[i] == enemy[1])
                 {
-                    enemy[1].sprite = Content.Load<Texture2D>("rose.png");
+                    enemy[1].sprite = Content.Load<Texture2D>("en1.png");
                 }
 
                 if (enemy[i] == enemy[2])
                 {
-                    enemy[2].sprite = Content.Load<Texture2D>("blue.png");
+                    enemy[2].sprite = Content.Load<Texture2D>("wing.png");
                 }
 
                 if (enemy[i] == enemy[3])
                 {
-                    enemy[3].sprite = Content.Load<Texture2D>("purple.png");
+                    enemy[3].sprite = Content.Load<Texture2D>("hammer.png");
                 }
 
                 if (enemy[i] == enemy[0])
                 {
-                    enemy[0].sprite = Content.Load<Texture2D>("green.png");
+                    enemy[0].sprite = Content.Load<Texture2D>("green2.png");
                 }           
             }
 
@@ -160,6 +189,8 @@ namespace Game2
         /// </summary>
         protected override void UnloadContent()
         {
+
+            
             // TODO: Unload any non ContentManager content here
         }
 
@@ -188,8 +219,8 @@ namespace Game2
             if (Keyboard.GetState().IsKeyDown(Keys.D))
             {
                 hero.position.X += 15;
-            }
 
+            }
 
             if (Keyboard.GetState().IsKeyDown(Keys.A))
             {
@@ -197,17 +228,46 @@ namespace Game2
             }
 
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space) && bullet.estVivant == false)
-            {
-                bullet.estVivant = true;
-                bullet.vitesse.X = 50;
-                bullet.position.Y = hero.position.Y + 60;
-                bullet.position.X = hero.position.X + 30;
-                bullet.position.X += 50;
+            for (int l = bullet.Length - 1; l >= 0; l--)
+            {               
+                if (Keyboard.GetState().IsKeyDown(Keys.Space) && bullet[l].estVivant == false)
+                {
+                    if (bullet[0].estVivant == false && bullet[1].estVivant == false && bullet[2].estVivant == false)
+                    {
+                        
+                            bullet[0].estVivant = true;
+                            bullet[0].vitesse.X = 50;
+                            bullet[0].position.Y = hero.position.Y + 60;
+                            bullet[0].position.X = hero.position.X + 30;
+                            bullet[0].position.X += 50;
+                       
+                            bullet[1].estVivant = true;
+                            bullet[1].vitesse.Y = 4;
+                            bullet[1].vitesse.X = 40;
+                            bullet[1].position.Y = hero.position.Y + 60;
+                            bullet[1].position.X = hero.position.X + 30;
+                        
+                            bullet[2].estVivant = true;
+                            bullet[2].vitesse.Y = -4;
+                            bullet[2].vitesse.X = 40;
+                            bullet[2].position.Y = hero.position.Y + 60;
+                            bullet[2].position.X = hero.position.X + 30;
+                            bullet[2].position.X += 50;
+                        
+
+                    }
+                }
             }
 
+            if (background2.position.X == fenetre.Left)
+            {
+                background1.position.X = background2.position.X + background2.sprite.Width;
+            }
+            if (background1.position.X == fenetre.Left)
+            {
+                background2.position.X = background1.position.X + background1.sprite.Width;
+            }
 
-           
 
 
 
@@ -216,6 +276,8 @@ namespace Game2
             Updatebullet();
             Updateenemy();
             Updateenemyb();
+            Updatebackground1();
+            Updatebackground2();
             base.Update(gameTime);
             
             
@@ -223,7 +285,16 @@ namespace Game2
         }
 
 
-        
+        public void Updatebackground1()
+        {
+            background1.position += background1.vitesse;
+        }
+
+        public void Updatebackground2()
+        {
+            background2.position += background2.vitesse;
+        }
+
 
         public void Updatehero()
         {
@@ -266,78 +337,79 @@ namespace Game2
             {
                 hero.estVivant = false;
                 enemyb.estVivant = false;
+                vies--;
             }
 
             if (this.hero.GetRect().Intersects(this.enemy[0].GetRect()))
             {
                 hero.estVivant = false;
                 enemyb.estVivant = false;
+                vies--;
             }
 
             if (this.hero.GetRect().Intersects(this.enemy[2].GetRect()))
             {
                 hero.estVivant = false;
                 enemyb.estVivant = false;
+                vies--;
             }
 
             if (this.hero.GetRect().Intersects(this.enemy[3].GetRect()))
             {
                 hero.estVivant = false;
                 enemyb.estVivant = false;
+                vies--;
 
             }
 
             if (this.enemyb.GetRect().Intersects(this.hero.GetRect()))
             {
                 hero.estVivant = false;
-                enemyb.estVivant = false;
+                vies--;          
             }
 
-
-            if (this.enemyb.GetRect().Intersects(this.bullet.GetRect()))
-            {
-                bullet.estVivant = false;
-                enemyb.estVivant = false;
-            }
+           
 
         }
 
             public void Updatebullet()
         {
-            bullet.position += bullet.vitesse;
-
-            if (bullet.position.X < fenetre.Left)
+            for (int l = bullet.Length - 1; l >= 0; l--)
             {
-                bullet.position.X = fenetre.Left;
-                bullet.estVivant = false;
+                bullet[l].position += bullet[l].vitesse;
+
+                if (bullet[l].position.X < fenetre.Left)
+                {
+                    bullet[l].position.X = fenetre.Left;
+                    bullet[l].estVivant = false;
+                }
+
+                if (bullet[l].position.Y < fenetre.Top)
+                {
+                    bullet[l].position.Y = fenetre.Top;
+                    bullet[l].estVivant = false;
+                }
+
+                if (bullet[l].position.X + bullet[l].sprite.Bounds.Width > fenetre.Right)
+                {
+                    bullet[l].position.X = fenetre.Right - bullet[l].sprite.Bounds.Width;
+                    bullet[l].estVivant = false;
+                }
+
+                if (bullet[l].position.Y + bullet[l].sprite.Bounds.Height > fenetre.Bottom)
+                {
+                    bullet[l].position.Y = fenetre.Bottom - bullet[l].sprite.Bounds.Height;
+                    bullet[l].estVivant = false;
+                }
+            
+                if (bullet[l].position.X > fenetre.Right)
+                {
+                    bullet[l].position.X = fenetre.Right;
+                    bullet[l].estVivant = false;
+                }
+
+
             }
-
-            if (bullet.position.Y < fenetre.Top)
-            {
-                bullet.position.Y = fenetre.Top;
-                bullet.estVivant = false;
-            }
-
-            if (bullet.position.X + bullet.sprite.Bounds.Width > fenetre.Right)
-            {
-                bullet.position.X = fenetre.Right - bullet.sprite.Bounds.Width;
-                bullet.estVivant = false;
-            }
-
-            if (bullet.position.Y + bullet.sprite.Bounds.Height > fenetre.Bottom)
-            {
-                bullet.position.Y = fenetre.Bottom - bullet.sprite.Bounds.Height;
-                bullet.estVivant = false;
-            }
-
-            if (bullet.position.X > fenetre.Right)
-            {
-                bullet.position.X = fenetre.Right;
-                bullet.estVivant = false;
-            }
-
-
-
 
 
         }
@@ -357,7 +429,7 @@ namespace Game2
                 if (enemy[i].position.X < fenetre.Left)
                 {
                     enemy[i].position.X = fenetre.Left;
-                    
+
 
                 }
 
@@ -371,21 +443,21 @@ namespace Game2
                 if (enemy[i].position.X + enemy[i].sprite.Bounds.Width > fenetre.Right)
                 {
                     enemy[i].position.X = fenetre.Right - enemy[i].sprite.Bounds.Width;
-                    
+
 
                 }
 
                 if (enemy[i].position.Y + enemy[i].sprite.Bounds.Height > fenetre.Bottom)
                 {
                     enemy[i].position.Y = fenetre.Bottom - enemy[i].sprite.Bounds.Height;
-                    
+
 
                 }
 
                 if (enemy[i].position.X > fenetre.Right)
                 {
                     enemy[i].position.X = fenetre.Right;
-                    
+
 
                 }
 
@@ -410,18 +482,18 @@ namespace Game2
                     enemy[i].vitesse.X = rng.Next(3, 12);
                 }
 
-                if (this.bullet.GetRect().Intersects(this.enemy[i].GetRect()))
+                for (int l = bullet.Length - 1; l >= 0; l--)
                 {
-
-                    enemy[i].estVivant = false;
-                    bullet.estVivant = false;
-                    dieded.Play();
-                    kills++;
+                    if (this.bullet[l].GetRect().Intersects(this.enemy[i].GetRect()))
+                    {
+                        enemy[i].estVivant = false;
+                        bullet[l].estVivant = false;
+                        dieded.Play();
+                        kills++;
+                    }
 
                 }
-
-
-
+            
             }
         }
 
@@ -498,9 +570,18 @@ namespace Game2
             GraphicsDevice.Clear(Color.CornflowerBlue);
             spriteBatch.Begin();
 
-          
 
-            spriteBatch.Draw(back, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
+            if (background1.estVivant == true)
+            {
+                spriteBatch.Draw(background1.sprite, background1.position);
+            }
+
+            if (background2.estVivant == true)
+            {
+                spriteBatch.Draw(background2.sprite, background2.position, effects: SpriteEffects.FlipHorizontally);
+
+            }
+
 
             spriteBatch.DrawString(Text, gameTime.TotalGameTime.TotalSeconds.ToString(), new Vector2(0, 0), Color.Black);
 
@@ -508,15 +589,20 @@ namespace Game2
 
             spriteBatch.DrawString(score, " Score: " + kills.ToString(), new Vector2(1700, 0), Color.Black);
 
+            spriteBatch.DrawString(vie, " Vie: " + vies.ToString(), new Vector2(0, 100), Color.Black);
+
             if (hero.estVivant == true)
             {
                 spriteBatch.Draw(hero.sprite, hero.position, Color.White);               
             }
 
-            if (bullet.estVivant == true)
+            for (int l = bullet.Length - 1; l >= 0; l--)
             {
-                spriteBatch.Draw(bullet.sprite, bullet.position, Color.White);
+                if (bullet[l].estVivant == true)
+                {
+                    spriteBatch.Draw(bullet[l].sprite, bullet[l].position, Color.White);
 
+                }
             }
 
             for (int i = enemy.Length - 1; i >= 0; i--)
@@ -543,20 +629,33 @@ namespace Game2
                 }
             }
 
-
-          
-            if (bullet.estVivant == false)
+            if (hero.estVivant == false)
             {
-                bullet.position.Y = hero.position.Y + 60;
-                bullet.position.X = hero.position.X + 30;
-                bullet.position.X += 50;
+
+                hero.estVivant = true;
+                hero.position.X = 0;
+                hero.position.Y = rng.Next(0,1000);
+              
+
+          }
+
+
+            for (int l = bullet.Length - 1; l >= 0; l--)
+            {
+                if (bullet[l].estVivant == false)
+                {
+                    bullet[l].position.Y = hero.position.Y + 60;
+                    bullet[l].position.X = hero.position.X + 30;
+                    bullet[l].position.X += 50;
+                }
             }
 
-            if (hero.estVivant == false)
+            if (vies <= 0)
             {
                 MediaPlayer.Stop();
                 dieded.Stop();
                 fail.Play();
+                hero.estVivant = false;
                 
                 spriteBatch.Draw(defeat, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
                 
@@ -570,15 +669,28 @@ namespace Game2
              
             }
 
-            if (kills >= 35)
-            {
-               spriteBatch.Draw(victoire, new Rectangle(0, 0, graphics.GraphicsDevice.DisplayMode.Width, graphics.GraphicsDevice.DisplayMode.Height), Color.White);
-                win.Play();
+            if (kills >= 60)
+            {                            
                 dieded.Stop();
                 fail.Stop();
                 MediaPlayer.Stop();
+                spriteBatch.Draw(boss.sprite, boss.position, Color.White);
+
+                for (int i = enemy.Length - 1; i >= 0; i--)
+                {                 
+                        enemy[i].estVivant = false;
+                        enemy[i].position.X = 1900;
+                        enemy[i].position.Y = 1000;                                                                                         
+                }
+
+                enemyb.vitesse.X = 0;
+                enemyb.position.X = 1900;
+                enemyb.position.Y = 1000;
+                
+
             }
            
+            
 
             spriteBatch.End();
 
