@@ -19,27 +19,33 @@
 /processorParam:Quality=Best
 /build:Sounds\Musique.mp3
 
-#begin Sounds/background.mp3
-/importer:Mp3Importer
-/processor:SongProcessor
-/processorParam:Quality=Best
-/build:Sounds/background.mp3
-
 #begin Sounds/smack12.wav
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
 /build:Sounds/smack12.wav
 
-#begin Sounds/win1.wav
+#begin Sounds\background.mp3
+/importer:Mp3Importer
+/processor:SongProcessor
+/processorParam:Quality=Best
+/build:Sounds\background.mp3
+
+#begin Sounds\fail.mp3
 /importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sounds/win1.wav
+/build:Sounds\fail.mp3
 
-#begin Sounds\fail.mp3
-/importer:Mp3Importer
+#begin Sounds\win1.wav
+/importer:WavImporter
 /processor:SoundEffectProcessor
 /processorParam:Quality=Best
-/build:Sounds\fail.mp3
+/build:Sounds\win1.wav
+
+#begin Sounds\bowser.wav
+/importer:WavImporter
+/processor:SoundEffectProcessor
+/processorParam:Quality=Best
+/build:Sounds\bowser.wav
 
